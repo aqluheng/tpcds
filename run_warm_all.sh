@@ -26,5 +26,8 @@ CMD=$glutencmd
 echo "-----------开始查询-----------"
 
 $CMD -f warmAll.sql  &> tmp/time_warmAll.log
+$CMD -f warmAll.sql  &> tmp/time_warmAll1.log
+$CMD -f warmAll.sql  &> tmp/time_warmAll2.log
+$CMD -f warmAll.sql  &> tmp/time_warmAll3.log
 
 exit 0
