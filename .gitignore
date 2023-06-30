@@ -1,3 +1,4 @@
 tmp
 spark-conf
-*.tar.gz
+*.tar*
+nmonFile/*
