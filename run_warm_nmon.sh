@@ -19,13 +19,15 @@ glutencmd="spark-sql --master yarn \
                                 --conf spark.memory.offHeap.size=10g \
                                   --conf spark.executor.memoryOverhead=1g \
                                     --conf spark.driver.maxResultSize=32g \
+                                      --conf spark.gluten.loadLibFromJar=true \
                                    --database parquet_1000 "
 
 CMD=$glutencmd    
 
 echo "-----------开始查询-----------"
 
-python client.py &
+pkill -f client_generate_nmon.py
+python client_generate_nmon.py &
 $CMD -f warmAll.sql  &> tmp/time_nmon.log
 
 exit 0

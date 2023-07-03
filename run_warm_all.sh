@@ -19,15 +19,36 @@ glutencmd="spark-sql --master yarn \
                                 --conf spark.memory.offHeap.size=10g \
                                   --conf spark.executor.memoryOverhead=1g \
                                     --conf spark.driver.maxResultSize=32g \
+                                    --conf spark.gluten.loadLibFromJar=true \
+                                      --jars /opt/apps/SPARK3/gluten-current/gluten-thirdparty-lib-alinux-3.jar \
                                    --database parquet_1000 "
 
 CMD=$glutencmd    
 
 echo "-----------开始查询-----------"
 
-$CMD -f warmAll.sql  &> tmp/time_warmAll.log
-$CMD -f warmAll.sql  &> tmp/time_warmAll1.log
-$CMD -f warmAll.sql  &> tmp/time_warmAll2.log
-$CMD -f warmAll.sql  &> tmp/time_warmAll3.log
+runJar(){
+  rm /opt/apps/SPARK3/gluten-current
+  sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo rm /opt/apps/SPARK3/gluten-current
+  sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo rm /opt/apps/SPARK3/gluten-current
+  sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo rm /opt/apps/SPARK3/gluten-current
+  ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
+  sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
+  sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
+  sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
+  $CMD -f warmAll.sql  &> tmp/${testJar}_test1.log
+  $CMD -f warmAll.sql  &> tmp/${testJar}_test2.log
+  $CMD -f warmAll.sql  &> tmp/${testJar}_test3.log
+}
+
+testJar="gluten-shufflePatch"
+runJar
+
+testJar="gluten-master"
+runJar
+
+testJar="gluten-opensource"
+runJar
+
 
 exit 0
