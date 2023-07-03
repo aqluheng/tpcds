@@ -1,7 +1,6 @@
 #!/bin/bash
 bin=`dirname $0`
 bin=`cd $bin;pwd`
-file="focus.sql"
 
 mkdir -p tmp
 
@@ -21,7 +20,6 @@ glutencmd="spark-sql --master yarn \
                                   --conf spark.executor.memoryOverhead=1g \
                                     --conf spark.driver.maxResultSize=32g \
                                     --conf spark.gluten.loadLibFromJar=true \
-                                    --conf spark.gluten.enabled=true \
                                       --jars /opt/apps/SPARK3/gluten-current/gluten-thirdparty-lib-alinux-3.jar \
                                    --database parquet_1000 "
 
@@ -38,9 +36,9 @@ runJar(){
   sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
   sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
   sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
-  $CMD -f $file  &> tmp/opensource.log
-  # $CMD -f $file  &> tmp/${testJar}_test2.log
-  # $CMD -f $file  &> tmp/${testJar}_test3.log
+  $CMD -f warmSkip72.sql  &> tmp/${testJar}_test1.log
+  # $CMD -f warmAll.sql  &> tmp/${testJar}_test2.log
+  # $CMD -f warmAll.sql  &> tmp/${testJar}_test3.log
 }
 
 # testJar="gluten-shufflePatch"
