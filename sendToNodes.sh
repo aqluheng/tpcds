@@ -1,6 +1,6 @@
 #!/bin/bash
-filename=libptgoptimize.so.1
-outPath=/usr/lib64/
+filename=gluten-07-05
+outPath=/opt/apps/SPARK3/
 
 sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-1:
 sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-2:

@@ -1,10 +1,31 @@
 #!/bin/bash
-bin=`dirname $0`
-bin=`cd $bin;pwd`
+source /root/.bashrc
 
-mkdir -p tmp
+# date=$(date +%Y-%m-%d)
+date="2023-07-06"
 
-glutencmd="spark-sql --master yarn \
+sendToNodes(){
+    outPath=$1
+    filename=$2
+    echo $outPath $filename
+    sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-1:
+    sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-2:
+    sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-3:
+
+    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo mkdir -p $outPath
+    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo mkdir -p $outPath
+    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo mkdir -p $outPath
+
+    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo rm -r $outPath/$filename
+    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo rm -r $outPath/$filename
+    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo rm -r $outPath/$filename
+
+    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo mv $filename $outPath/$filename
+    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo mv $filename $outPath/$filename
+    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo mv $filename $outPath/$filename
+}
+
+CMD="spark-sql --master yarn \
           --deploy-mode client \
             --conf spark.driver.cores=8 \
               --conf spark.driver.memory=20g \
@@ -26,9 +47,6 @@ glutencmd="spark-sql --master yarn \
                                       --jars /opt/apps/SPARK3/gluten-current/gluten-thirdparty-lib-alinux-3.jar \
                                    --database parquet_1000 "
 
-CMD=$glutencmd    
-
-echo "-----------开始查询-----------"
 
 runJar(){
   rm /opt/apps/SPARK3/gluten-current
@@ -40,18 +58,23 @@ runJar(){
   sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
   sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
   $CMD -f warmSkip72.sql  &> tmp/${testJar}_test1.log
-  $CMD -f warmAll.sql  &> tmp/${testJar}_test2.log
-  $CMD -f warmAll.sql  &> tmp/${testJar}_test3.log
+  $CMD -f warmSkip72.sql  &> tmp/${testJar}_test2.log
+  $CMD -f warmSkip72.sql  &> tmp/${testJar}_test3.log
 }
 
-# testJar="gluten-shufflePatch"
-# runJar
+veloxpath=`ossutil ls oss://ptg-storage/bigdata/gluten/release/ | grep gluten-velox-emr-$date.* | sed -n 's/.*\(oss:\/\/.*\.jar\).*/\1/p'` # eg: oss://ptg-storage/bigdata/gluten/release/gluten-velox-emr-2023-06-16-10-59.jar
+veloxfile=${veloxpath##*/} # eg: gluten-velox-emr-2023-06-16-10-59.jar
 
-# testJar="gluten-master"
-# runJar
 
-testJar="gluten-2023-07-06"
+thirdpartypath=`ossutil ls oss://ptg-storage/bigdata/gluten/release/ | grep gluten-thirdparty-emr-$date.* | sed -n 's/.*\(oss:\/\/.*\.jar\).*/\1/p'` # eg: oss://ptg-storage/bigdata/gluten/release/gluten-thirdparty-emr-2023-06-16-10-59.jar
+thirdpartyfile=${veloxpath##*/} # eg: gluten-thirdparty-emr-2023-06-16-10-59.jar
+
+echo Use jar from $ossfile $thirdpartyfile > tpcds/tmp/time.csv
+mkdir -p /opt/apps/SPARK3/gluten-$date/
+ossutil cp $veloxpath /opt/apps/SPARK3/gluten-$date/gluten-velox-bundle-spark3.3_2.12-alinux_3-0.5.0-SNAPSHOT.jar
+ossutil cp $thirdpartypath /opt/apps/SPARK3/gluten-$date/gluten-thirdparty-lib-alinux-3.jar
+
+sendToNodes /opt/apps/SPARK3 gluten-$date
+
+testJar="gluten-$date"
 runJar
-
-
-exit 0

@@ -3,3 +3,4 @@ spark-conf
 *.tar*
 nmonFile/*
 everydayLog
+tmpLog.log
