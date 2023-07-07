@@ -2,28 +2,7 @@
 source /root/.bashrc
 
 # date=$(date +%Y-%m-%d)
-date="2023-07-06"
-
-sendToNodes(){
-    outPath=$1
-    filename=$2
-    echo $outPath $filename
-    sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-1:
-    sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-2:
-    sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-3:
-
-    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo mkdir -p $outPath
-    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo mkdir -p $outPath
-    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo mkdir -p $outPath
-
-    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo rm -r $outPath/$filename
-    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo rm -r $outPath/$filename
-    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo rm -r $outPath/$filename
-
-    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo mv $filename $outPath/$filename
-    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo mv $filename $outPath/$filename
-    sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo mv $filename $outPath/$filename
-}
+date="2023-07-07"
 
 CMD="spark-sql --master yarn \
           --deploy-mode client \
@@ -46,7 +25,6 @@ CMD="spark-sql --master yarn \
                                     --conf spark.driver.extraClassPath="/opt/apps/METASTORE/metastore-current/hive2/*:/opt/apps/JINDOSDK/jindosdk-current/lib/*:/opt/apps/EMRHOOK/emrhook-current/spark-hook-spark30.jar:/opt/apps/SPARK3/gluten-current/*"\
                                       --jars /opt/apps/SPARK3/gluten-current/gluten-thirdparty-lib-alinux-3.jar \
                                    --database parquet_1000 "
-
 
 runJar(){
   rm /opt/apps/SPARK3/gluten-current

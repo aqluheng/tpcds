@@ -40,8 +40,8 @@ runJar(){
   sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
   sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
   $CMD -f warmSkip72.sql  &> tmp/${testJar}_test1.log
-  $CMD -f warmAll.sql  &> tmp/${testJar}_test2.log
-  $CMD -f warmAll.sql  &> tmp/${testJar}_test3.log
+  $CMD -f warmSkip72.sql  &> tmp/${testJar}_test2.log
+  $CMD -f warmSkip72.sql  &> tmp/${testJar}_test3.log
 }
 
 # testJar="gluten-shufflePatch"
