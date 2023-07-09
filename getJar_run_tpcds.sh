@@ -1,8 +1,9 @@
 #!/bin/bash
 source /root/.bashrc
+source /root/tpcds/utils/helper-functions.sh
 
-# date=$(date +%Y-%m-%d)
-date="2023-07-07"
+date=$(date +%Y-%m-%d)
+# date="2023-07-01"
 
 CMD="spark-sql --master yarn \
           --deploy-mode client \
@@ -40,14 +41,15 @@ runJar(){
   $CMD -f warmSkip72.sql  &> tmp/${testJar}_test3.log
 }
 
-veloxpath=`ossutil ls oss://ptg-storage/bigdata/gluten/release/ | grep gluten-velox-emr-$date.* | sed -n 's/.*\(oss:\/\/.*\.jar\).*/\1/p'` # eg: oss://ptg-storage/bigdata/gluten/release/gluten-velox-emr-2023-06-16-10-59.jar
+veloxpath=`ossutil ls oss://ptg-storage/bigdata/gluten/release/ | grep gluten-velox-emr-$date-12.* | sed -n 's/.*\(oss:\/\/.*\.jar\).*/\1/p'` # eg: oss://ptg-storage/bigdata/gluten/release/gluten-velox-emr-2023-06-16-10-59.jar
 veloxfile=${veloxpath##*/} # eg: gluten-velox-emr-2023-06-16-10-59.jar
 
 
-thirdpartypath=`ossutil ls oss://ptg-storage/bigdata/gluten/release/ | grep gluten-thirdparty-emr-$date.* | sed -n 's/.*\(oss:\/\/.*\.jar\).*/\1/p'` # eg: oss://ptg-storage/bigdata/gluten/release/gluten-thirdparty-emr-2023-06-16-10-59.jar
-thirdpartyfile=${veloxpath##*/} # eg: gluten-thirdparty-emr-2023-06-16-10-59.jar
+thirdpartypath=`ossutil ls oss://ptg-storage/bigdata/gluten/release/ | grep gluten-thirdparty-emr-$date-12.* | sed -n 's/.*\(oss:\/\/.*\.jar\).*/\1/p'` # eg: oss://ptg-storage/bigdata/gluten/release/gluten-thirdparty-emr-2023-06-16-10-59.jar
+thirdpartyfile=${thirdpartypath##*/} # eg: gluten-thirdparty-emr-2023-06-16-10-59.jar
 
-echo Use jar from $ossfile $thirdpartyfile > tpcds/tmp/time.csv
+echo Use jar from $veloxfile
+echo Use jar from $thirdpartyfile
 mkdir -p /opt/apps/SPARK3/gluten-$date/
 ossutil cp $veloxpath /opt/apps/SPARK3/gluten-$date/gluten-velox-bundle-spark3.3_2.12-alinux_3-0.5.0-SNAPSHOT.jar
 ossutil cp $thirdpartypath /opt/apps/SPARK3/gluten-$date/gluten-thirdparty-lib-alinux-3.jar
