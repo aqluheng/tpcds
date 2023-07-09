@@ -2,6 +2,7 @@
 bin=`dirname $0`
 bin=`cd $bin;pwd`
 
+source utils/helper-functions.sh
 mkdir -p tmp
 
 glutencmd="spark-sql --master yarn \
@@ -40,17 +41,10 @@ runJar(){
   sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
   sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
   $CMD -f warmSkip72.sql  &> tmp/${testJar}_test1.log
-  $CMD -f warmSkip72.sql  &> tmp/${testJar}_test2.log
-  $CMD -f warmSkip72.sql  &> tmp/${testJar}_test3.log
 }
 
-# testJar="gluten-shufflePatch"
-# runJar
-
-# testJar="gluten-master"
-# runJar
-
-testJar="gluten-2023-07-06"
+testJar="gluten-07-01"
+sendToNodes /opt/apps/SPARK3/ gluten-07-01
 runJar
 
 

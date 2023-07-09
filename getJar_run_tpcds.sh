@@ -1,8 +1,8 @@
 #!/bin/bash
 source /root/.bashrc
-
+source utils/helper-functions.sh
 # date=$(date +%Y-%m-%d)
-date="2023-07-07"
+date="master-2023-07-06"
 
 CMD="spark-sql --master yarn \
           --deploy-mode client \
@@ -47,12 +47,12 @@ veloxfile=${veloxpath##*/} # eg: gluten-velox-emr-2023-06-16-10-59.jar
 thirdpartypath=`ossutil ls oss://ptg-storage/bigdata/gluten/release/ | grep gluten-thirdparty-emr-$date.* | sed -n 's/.*\(oss:\/\/.*\.jar\).*/\1/p'` # eg: oss://ptg-storage/bigdata/gluten/release/gluten-thirdparty-emr-2023-06-16-10-59.jar
 thirdpartyfile=${veloxpath##*/} # eg: gluten-thirdparty-emr-2023-06-16-10-59.jar
 
-echo Use jar from $ossfile $thirdpartyfile > tpcds/tmp/time.csv
+echo Use jar from $ossfile $thirdpartyfile
 mkdir -p /opt/apps/SPARK3/gluten-$date/
 ossutil cp $veloxpath /opt/apps/SPARK3/gluten-$date/gluten-velox-bundle-spark3.3_2.12-alinux_3-0.5.0-SNAPSHOT.jar
 ossutil cp $thirdpartypath /opt/apps/SPARK3/gluten-$date/gluten-thirdparty-lib-alinux-3.jar
 
 sendToNodes /opt/apps/SPARK3 gluten-$date
 
-testJar="gluten-$date"
-runJar
+# testJar="gluten-$date"
+# runJar
