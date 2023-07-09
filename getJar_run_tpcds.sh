@@ -56,5 +56,5 @@ ossutil cp $thirdpartypath /opt/apps/SPARK3/gluten-$date/gluten-thirdparty-lib-a
 
 sendToNodes /opt/apps/SPARK3 gluten-$date
 
-testJar="gluten-$date"
-runJar
+# testJar="gluten-$date"
+# runJar
