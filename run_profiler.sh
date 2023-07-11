@@ -1,12 +1,10 @@
 #!/bin/bash
-source utils/helper-functions.sh
 bin=`dirname $0`
 bin=`cd $bin;pwd`
-OUTFILE="tmp/time_nmon.log"
 
-mkdir -p tmp
 GLUTEN_ENABLE=true
 DATASET="parquet_1000"
+OUTFILE="tmp/time_profiler.log"
 
 glutencmd="spark-sql --master yarn \
           --deploy-mode client \
@@ -29,13 +27,23 @@ glutencmd="spark-sql --master yarn \
                                     --conf spark.driver.extraClassPath="/opt/apps/METASTORE/metastore-current/hive2/*:/opt/apps/JINDOSDK/jindosdk-current/lib/*:/opt/apps/EMRHOOK/emrhook-current/spark-hook-spark30.jar:/opt/apps/SPARK3/gluten-current/*"\
                                       --jars /opt/apps/SPARK3/gluten-current/gluten-thirdparty-lib-alinux-3.jar \
                                    --database $DATASET"
-
 CMD=$glutencmd    
 
 echo "-----------开始查询-----------"
-setJarLink gluten-2023-07-01
-pkill -f client_generate_nmon.py
-sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo pkill -f nmon
-python client_generate_nmon.py &
-$CMD -f warmSkip72.sql  &> $OUTFILE
+echo "-----------开始查询-----------" > $OUTFILE
+
+#exec sql
+for (( i=1;i<=99;++i ))
+do
+    case $i in
+      72|95)
+        continue
+        ;;
+      *)
+        ;;
+    esac
+    echo "query$i start"
+    sed -i 's/{{APP_ID}}_{{EXECUTOR_ID}}.*$/{{APP_ID}}_{{EXECUTOR_ID}}_'$i'.html/' spark-conf/spark-defaults.conf
+    $CMD -f "qualification-queries/query$i.sql"  &>> $OUTFILE
+done
 exit 0
