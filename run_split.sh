@@ -1,9 +1,11 @@
 #!/bin/bash
 bin=`dirname $0`
 bin=`cd $bin;pwd`
-file="warmSkip72.sql"
+source utils/helper-functions.sh
 
-mkdir -p tmp
+GLUTEN_ENABLE=true
+DATASET="parquet_1000"
+OUTFILE="tmp/time_split.log"
 
 glutencmd="spark-sql --master yarn \
           --deploy-mode client \
@@ -21,35 +23,34 @@ glutencmd="spark-sql --master yarn \
                                   --conf spark.executor.memoryOverhead=1g \
                                     --conf spark.driver.maxResultSize=32g \
                                     --conf spark.gluten.loadLibFromJar=true \
-                                    --conf spark.gluten.enabled=true \
+                                    --conf spark.gluten.enabled=${GLUTEN_ENABLE} \
+                                    --conf spark.gluten.sql.debug=true \
+                                    --conf spark.gluten.sql.benchmark_task.stageId=12 \
+                                    --conf spark.gluten.sql.benchmark_task.partitionId=-1 \
+                                    --conf spark.gluten.sql.benchmark_task.taskId=-1 \
+                                    --conf spark.gluten.saveDir=/tmp/save/ \
                                     --conf spark.executor.extraClassPath="/opt/apps/METASTORE/metastore-current/hive2/*:/opt/apps/JINDOSDK/jindosdk-current/lib/*:/opt/apps/EMRHOOK/emrhook-current/spark-hook-spark30.jar:/opt/apps/SPARK3/gluten-current/*"\
                                     --conf spark.driver.extraClassPath="/opt/apps/METASTORE/metastore-current/hive2/*:/opt/apps/JINDOSDK/jindosdk-current/lib/*:/opt/apps/EMRHOOK/emrhook-current/spark-hook-spark30.jar:/opt/apps/SPARK3/gluten-current/*"\
-                                      --jars /opt/apps/SPARK3/gluten-current/gluten-thirdparty-lib-alinux-3.jar \
-                                   --database parquet_1000 "
-
+                                   --database $DATASET"
 CMD=$glutencmd    
 
 echo "-----------开始查询-----------"
+echo "-----------开始查询-----------" > $OUTFILE
 
-runJar(){
-  rm /opt/apps/SPARK3/gluten-current
-  sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo rm /opt/apps/SPARK3/gluten-current
-  sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo rm /opt/apps/SPARK3/gluten-current
-  sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo rm /opt/apps/SPARK3/gluten-current
-  ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
-  sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
-  sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
-  sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
-  $CMD -f $file  &> tmp/${testJar}_test1.log
-  $CMD -f $file  &> tmp/${testJar}_test2.log
-  $CMD -f $file  &> tmp/${testJar}_test3.log
-}
+# 将gluten-current指向编译好的jar包路径
+setJarLink debug-2023-07-01
 
-testJar="gluten-master"
-runJar
-
-testJar="gluten-opensource"
-runJar
-
-
+#exec sql
+for (( i=5;i<=5;++i ))
+do
+    case $i in
+      72|95)
+        continue
+        ;;
+      *)
+        ;;
+    esac
+    echo "query$i start"
+    $CMD -f "qualification-queries/query$i.sql"  &>> $OUTFILE
+done
 exit 0

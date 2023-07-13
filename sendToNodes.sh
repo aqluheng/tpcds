@@ -1,6 +1,6 @@
 #!/bin/bash
-filename=async-profiler-2.9-linux-arm64
-outPath=/tmp/
+filename=gluten-2023-07-01
+outPath=/opt/apps/SPARK3/
 
 sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-1:
 sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-2:

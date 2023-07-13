@@ -3,6 +3,7 @@ spark-conf
 *.tar*
 nmonFile/*
 everydayLog
-tmpLog.log
+*.log
 AutoTuneSphere
 *.zip
+arm_gluten1000_16c_flamegraph
