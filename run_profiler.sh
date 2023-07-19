@@ -10,7 +10,7 @@ source utils/helper-functions.sh
 echo "-----------开始查询-----------" | tee $OUTFILE
 setJarLink gluten-2023-07-01
 
-for (( i=31;i<=31;++i ))
+for (( i=95;i<=95;++i ))
 do
     # case $i in
     #   72|95)

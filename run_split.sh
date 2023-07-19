@@ -25,7 +25,7 @@ glutencmd="spark-sql --master yarn \
                                     --conf spark.gluten.loadLibFromJar=true \
                                     --conf spark.gluten.enabled=${GLUTEN_ENABLE} \
                                     --conf spark.gluten.sql.debug=true \
-                                    --conf spark.gluten.sql.benchmark_task.stageId=12 \
+                                    --conf spark.gluten.sql.benchmark_task.stageId=10 \
                                     --conf spark.gluten.sql.benchmark_task.partitionId=-1 \
                                     --conf spark.gluten.sql.benchmark_task.taskId=-1 \
                                     --conf spark.gluten.saveDir=/tmp/save/ \
@@ -41,7 +41,7 @@ echo "-----------开始查询-----------" > $OUTFILE
 setJarLink debug-2023-07-01
 
 #exec sql
-for (( i=5;i<=5;++i ))
+for (( i=23;i<=23;++i ))
 do
     case $i in
       72|95)
@@ -51,6 +51,6 @@ do
         ;;
     esac
     echo "query$i start"
-    $CMD -f "qualification-queries/query$i.sql"  &>> $OUTFILE
+    $CMD -f "qualification-queries/query${i}a.sql"  &>> $OUTFILE
 done
 exit 0

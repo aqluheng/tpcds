@@ -1,5 +1,5 @@
 #!/bin/bash
-filename=gluten-2023-07-01
+filename=gluten-master-1.0.1
 outPath=/opt/apps/SPARK3/
 
 sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-1:
