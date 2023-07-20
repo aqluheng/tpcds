@@ -24,7 +24,7 @@ where
 group by
 	n_name
 order by
-	revenue desc
+	revenue desc;
 -- using default substitutions
 
 
@@ -48,7 +48,7 @@ group by
 	l_linestatus
 order by
 	l_returnflag,
-	l_linestatus
+	l_linestatus;
 -- using default substitutions
 
 
@@ -95,7 +95,7 @@ order by
 	n_name,
 	s_name,
 	p_partkey
-limit 100
+limit 100;
 -- using default substitutions
 
 
@@ -121,7 +121,7 @@ group by
 order by
 	revenue desc,
 	o_orderdate
-limit 10
+limit 10;
 -- using default substitutions
 
 
@@ -145,7 +145,7 @@ where
 group by
 	o_orderpriority
 order by
-	o_orderpriority
+	o_orderpriority;
 -- using default substitutions
 
 
@@ -172,7 +172,7 @@ where
 group by
 	n_name
 order by
-	revenue desc
+	revenue desc;
 -- using default substitutions
 
 
@@ -184,7 +184,7 @@ where
 	l_shipdate >= '1994-01-01'
 	and l_shipdate < '1995-01-01'
 	and l_discount between .06 - 0.01 and .06 + 0.01
-	and l_quantity < 24
+	and l_quantity < 24;
 -- using default substitutions
 
 
@@ -226,7 +226,7 @@ group by
 order by
 	supp_nation,
 	cust_nation,
-	l_year
+	l_year;
 -- using default substitutions
 
 
@@ -266,7 +266,7 @@ from
 group by
 	o_year
 order by
-	o_year
+	o_year;
 -- using default substitutions
 
 
@@ -301,7 +301,7 @@ group by
 	o_year
 order by
 	nation,
-	o_year desc
+	o_year desc;
 -- using default substitutions
 
 
@@ -336,7 +336,7 @@ group by
 	c_comment
 order by
 	revenue desc
-limit 20
+limit 20;
 -- using default substitutions
 
 
@@ -366,7 +366,7 @@ group by
 				and n_name = 'GERMANY'
 		)
 order by
-	value desc
+	value desc;
 -- using default substitutions
 
 
@@ -397,7 +397,7 @@ where
 group by
 	l_shipmode
 order by
-	l_shipmode
+	l_shipmode;
 -- using default substitutions
 
 
@@ -420,7 +420,7 @@ group by
 	c_count
 order by
 	custdist desc,
-	c_count desc
+	c_count desc;
 -- using default substitutions
 
 
@@ -436,7 +436,7 @@ from
 where
 	l_partkey = p_partkey
 	and l_shipdate >= '1995-09-01'
-	and l_shipdate < '1995-10-01'
+	and l_shipdate < '1995-10-01';
 -- using default substitutions
 
 with revenue0 as
@@ -449,7 +449,7 @@ with revenue0 as
 		l_shipdate >= '1996-01-01'
 		and l_shipdate < '1996-04-01'
 	group by
-		l_suppkey)
+		l_suppkey);
 
 
 select
@@ -470,7 +470,7 @@ where
 			revenue0
 	)
 order by
-	s_suppkey
+	s_suppkey;
 
 -- using default substitutions
 
@@ -504,7 +504,7 @@ order by
 	supplier_cnt desc,
 	p_brand,
 	p_type,
-	p_size
+	p_size;
 -- using default substitutions
 
 
@@ -524,7 +524,7 @@ where
 			lineitem
 		where
 			l_partkey = p_partkey
-	)
+	);
 -- using default substitutions
 
 
@@ -560,7 +560,7 @@ group by
 order by
 	o_totalprice desc,
 	o_orderdate
-limit 100
+limit 100;
 -- using default substitutions
 
 
@@ -598,7 +598,7 @@ where
 		and p_size between 1 and 15
 		and l_shipmode in ('AIR', 'AIR REG')
 		and l_shipinstruct = 'DELIVER IN PERSON'
-	)
+	);
 -- using default substitutions
 
 
@@ -638,7 +638,7 @@ where
 	and s_nationkey = n_nationkey
 	and n_name = 'CANADA'
 order by
-	s_name
+	s_name;
 -- using default substitutions
 
 
@@ -681,7 +681,7 @@ group by
 order by
 	numwait desc,
 	s_name
-limit 100
+limit 100;
 -- using default substitutions
 
 
