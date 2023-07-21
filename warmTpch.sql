@@ -449,7 +449,7 @@ with revenue0 as
 		l_shipdate >= '1996-01-01'
 		and l_shipdate < '1996-04-01'
 	group by
-		l_suppkey);
+		l_suppkey)
 
 
 select
