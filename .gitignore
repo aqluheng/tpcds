@@ -9,3 +9,5 @@ AutoTuneSphere
 arm_gluten1000_16c_flamegraph
 parquet_dump
 sql23a
+*.parquet
+*.json
