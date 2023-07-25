@@ -43,6 +43,29 @@ sendToNodes(){
     sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo mv $filename $outPath/$filename
 }
 
+
+cleanNodes(){
+  slave_node_num=${1:-3}
+
+  hostname=$(hostname)
+  if [[ $hostname == *"master-1-1"* ]]; then
+      slave_name="core-1-"
+      user_name="emr-user"
+  else
+      slave_name="node"
+      user_name="root"
+  fi
+
+  for i in $(seq $slave_node_num)
+  do
+    echo "clean memory for $slave_name$i ..."
+    sudo -u $user_name ssh -o StrictHostKeyChecking=no $user_name@$slave_name$i "sudo sh -c 'sync && echo 3 > /proc/sys/vm/drop_caches'"
+  done
+
+  echo "clean memory for master ..."
+  sudo sh -c 'sync && echo 3 > /proc/sys/vm/drop_caches'
+}
+
 CMD="spark-sql --master yarn \
           --deploy-mode client \
             --conf spark.driver.cores=8 \
@@ -59,8 +82,6 @@ CMD="spark-sql --master yarn \
                                   --conf spark.executor.memoryOverhead=1g \
                                     --conf spark.driver.maxResultSize=32g \
                                     --conf spark.gluten.loadLibFromJar=true \
-                                    --conf spark.gluten.sql.columnar.forceShuffledHashJoin=false \
-                                    --conf spark.sql.join.preferSortMergeJoin=true \
                                     --conf spark.gluten.enabled=${GLUTEN_ENABLE} \
                                     --conf spark.executor.extraClassPath="/opt/apps/METASTORE/metastore-current/hive2/*:/opt/apps/JINDOSDK/jindosdk-current/lib/*:/opt/apps/EMRHOOK/emrhook-current/spark-hook-spark30.jar:/opt/apps/SPARK3/gluten-current/*"\
                                     --conf spark.driver.extraClassPath="/opt/apps/METASTORE/metastore-current/hive2/*:/opt/apps/JINDOSDK/jindosdk-current/lib/*:/opt/apps/EMRHOOK/emrhook-current/spark-hook-spark30.jar:/opt/apps/SPARK3/gluten-current/*"\

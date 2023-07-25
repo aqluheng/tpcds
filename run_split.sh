@@ -25,7 +25,7 @@ glutencmd="spark-sql --master yarn \
                                     --conf spark.gluten.loadLibFromJar=true \
                                     --conf spark.gluten.enabled=${GLUTEN_ENABLE} \
                                     --conf spark.gluten.sql.debug=true \
-                                    --conf spark.gluten.sql.benchmark_task.stageId=77 \
+                                    --conf spark.gluten.sql.benchmark_task.stageId=69 \
                                     --conf spark.gluten.sql.benchmark_task.partitionId=-1 \
                                     --conf spark.gluten.sql.benchmark_task.taskId=-1 \
                                     --conf spark.gluten.saveDir=/tmp/save/ \
@@ -40,7 +40,7 @@ echo "-----------开始查询-----------" > $OUTFILE
 # 将gluten-current指向编译好的jar包路径
 setJarLink debug-2023-07-01
 
-$CMD -f warmQuery5.sql
+$CMD -f warmShort.sql
 #exec sql
 # for (( i=23;i<=23;++i ))
 # do

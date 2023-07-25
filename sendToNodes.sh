@@ -1,5 +1,5 @@
 #!/bin/bash
-filename=yitian-useNEON
+filename=gluten-unflat-insertForJoin
 outPath=/opt/apps/SPARK3/
 
 sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-1:
