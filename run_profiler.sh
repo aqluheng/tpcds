@@ -10,6 +10,7 @@ source utils/helper-functions.sh
 echo "-----------开始查询-----------" | tee $OUTFILE
 setJarLink gluten-2023-07-01
 
+cleanNodes
 for (( i=95;i<=95;++i ))
 do
     # case $i in

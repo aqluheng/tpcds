@@ -5,7 +5,7 @@ source utils/helper-functions.sh
 
 GLUTEN_ENABLE=true
 DATASET="parquet_1000"
-OUTFILE="tmp/time_split.log"
+OUTFILE="tmp/time_disHashJoin_debug.log"
 
 glutencmd="spark-sql --master yarn \
           --deploy-mode client \
@@ -23,9 +23,11 @@ glutencmd="spark-sql --master yarn \
                                   --conf spark.executor.memoryOverhead=1g \
                                     --conf spark.driver.maxResultSize=32g \
                                     --conf spark.gluten.loadLibFromJar=true \
+                                    --conf spark.gluten.sql.columnar.forceShuffledHashJoin=false \
+                                    --conf spark.sql.join.preferSortMergeJoin=true \
                                     --conf spark.gluten.enabled=${GLUTEN_ENABLE} \
                                     --conf spark.gluten.sql.debug=true \
-                                    --conf spark.gluten.sql.benchmark_task.stageId=69 \
+                                    --conf spark.gluten.sql.benchmark_task.stageId=-1 \
                                     --conf spark.gluten.sql.benchmark_task.partitionId=-1 \
                                     --conf spark.gluten.sql.benchmark_task.taskId=-1 \
                                     --conf spark.gluten.saveDir=/tmp/save/ \
@@ -34,16 +36,18 @@ glutencmd="spark-sql --master yarn \
                                    --database $DATASET"
 CMD=$glutencmd    
 
+cleanNodes
 echo "-----------开始查询-----------"
-echo "-----------开始查询-----------" > $OUTFILE
+echo "-----------开始查询-----------" >> $OUTFILE
 
 # 将gluten-current指向编译好的jar包路径
 setJarLink debug-2023-07-01
 
-$CMD -f warmShort.sql
+# $CMD -f warmShort.sql
 #exec sql
-# for (( i=23;i<=23;++i ))
-# do
+cleanNodes
+for (( i=93;i<=99;++i ))
+do
 #     case $i in
 #       72|95)
 #         continue
@@ -51,7 +55,7 @@ $CMD -f warmShort.sql
 #       *)
 #         ;;
 #     esac
-#     echo "query$i start"
-#     $CMD -f "qualification-queries/query${i}a.sql"  &>> $OUTFILE
-# done
+    echo "query$i start"
+    $CMD -f "qualification-queries/query${i}.sql"  &>> $OUTFILE
+done
 exit 0

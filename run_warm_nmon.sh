@@ -11,5 +11,5 @@ setJarLink gluten-2023-07-01
 pkill -f client_generate_nmon.py
 sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo pkill -f nmon
 python client_generate_nmon.py &
-$CMD -f warmSkip72.sql  &> $OUTFILE
+cleanNodes && $CMD -f warmSkip72.sql  &> $OUTFILE
 exit 0

@@ -1,8 +1,29 @@
 #!/bin/bash
 source /root/.bashrc
 
-# date=$(date +%Y-%m-%d)
-date="2023-07-06"
+date=$(date +%m-%d)
+cleanNodes(){
+  slave_node_num=${1:-3}
+
+  hostname=$(hostname)
+  if [[ $hostname == *"master-1-1"* ]]; then
+      slave_name="core-1-"
+      user_name="emr-user"
+  else
+      slave_name="node"
+      user_name="root"
+  fi
+
+  for i in $(seq $slave_node_num)
+  do
+    echo "clean memory for $slave_name$i ..."
+    sudo -u $user_name ssh -o StrictHostKeyChecking=no $user_name@$slave_name$i "sudo sh -c 'sync && echo 3 > /proc/sys/vm/drop_caches'"
+  done
+
+  echo "clean memory for master ..."
+  sudo sh -c 'sync && echo 3 > /proc/sys/vm/drop_caches'
+}
+
 
 sendToNodes(){
     outPath=$1
@@ -44,8 +65,7 @@ CMD="spark-sql --master yarn \
                                     --conf spark.gluten.enabled=true \
                                     --conf spark.executor.extraClassPath="/opt/apps/METASTORE/metastore-current/hive2/*:/opt/apps/JINDOSDK/jindosdk-current/lib/*:/opt/apps/EMRHOOK/emrhook-current/spark-hook-spark30.jar:/opt/apps/SPARK3/gluten-current/*"\
                                     --conf spark.driver.extraClassPath="/opt/apps/METASTORE/metastore-current/hive2/*:/opt/apps/JINDOSDK/jindosdk-current/lib/*:/opt/apps/EMRHOOK/emrhook-current/spark-hook-spark30.jar:/opt/apps/SPARK3/gluten-current/*"\
-                                      --jars /opt/apps/SPARK3/gluten-current/gluten-thirdparty-lib-alinux-3.jar \
-                                   --database parquet_1000 "
+                                   --database parquet_1000"
 
 
 runJar(){
@@ -57,24 +77,16 @@ runJar(){
   sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
   sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
   sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo ln -s /opt/apps/SPARK3/$testJar /opt/apps/SPARK3/gluten-current
-  $CMD -f warmSkip72.sql  &> tmp/${testJar}_test1.log
-  $CMD -f warmSkip72.sql  &> tmp/${testJar}_test2.log
-  $CMD -f warmSkip72.sql  &> tmp/${testJar}_test3.log
+  mkdir -p everydayLog/${testJar}/
+  cleanNodes && $CMD -f warmSkip72.sql  &> everydayLog/${testJar}/test1.log
+  cleanNodes && $CMD -f warmSkip72.sql  &> everydayLog/${testJar}/test2.log
+  cleanNodes && $CMD -f warmSkip72.sql  &> everydayLog/${testJar}/test3.log
 }
 
-veloxpath=`ossutil ls oss://ptg-storage/bigdata/gluten/release/ | grep gluten-velox-emr-master-$date.* | sed -n 's/.*\(oss:\/\/.*\.jar\).*/\1/p'` # eg: oss://ptg-storage/bigdata/gluten/release/gluten-velox-emr-2023-06-16-10-59.jar
-veloxfile=${veloxpath##*/} # eg: gluten-velox-emr-2023-06-16-10-59.jar
 
-
-thirdpartypath=`ossutil ls oss://ptg-storage/bigdata/gluten/release/ | grep gluten-thirdparty-emr-master-$date.* | sed -n 's/.*\(oss:\/\/.*\.jar\).*/\1/p'` # eg: oss://ptg-storage/bigdata/gluten/release/gluten-thirdparty-emr-2023-06-16-10-59.jar
-thirdpartyfile=${veloxpath##*/} # eg: gluten-thirdparty-emr-2023-06-16-10-59.jar
-
-echo Use jar from $ossfile $thirdpartyfile > tpcds/tmp/time.csv
-mkdir -p /opt/apps/SPARK3/gluten-master-$date/
-ossutil cp $veloxpath /opt/apps/SPARK3/gluten-master-$date/gluten-velox-bundle-spark3.3_2.12-alinux_3-0.5.0-SNAPSHOT.jar
-ossutil cp $thirdpartypath /opt/apps/SPARK3/gluten-master-$date/gluten-thirdparty-lib-alinux-3.jar
-
-sendToNodes /opt/apps/SPARK3 gluten-master-$date
-
-testJar="gluten-master-$date"
-runJar
+ossutil cp -r oss://ptg-storage/bigdata/gluten/release/opensource-$date /opt/apps/SPARK3/
+if [ -d "/opt/apps/SPARK3/opensource-$date" ]; then
+  sendToNodes /opt/apps/SPARK3 opensource-$date
+  testJar="opensource-$date"
+  runJar
+fi
