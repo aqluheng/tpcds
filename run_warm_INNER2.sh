@@ -9,4 +9,9 @@ DATASET="parquet_1000"
 
 testJar="gluten-opensource-1.0.0" 
 getCMD 1 $DATASET
-setJarLink $testJar && cleanNodes && $CMD -f warmSkip72.sql  &> tmp/${testJar}_test1.log
+setJarLink $testJar && cleanNodes && $CMD -f warmInner2.sql  &> tmp/${testJar}_test1.log
+
+
+testJar="gluten-1.0.0-onlyLinear" 
+getCMD 1 $DATASET
+setJarLink $testJar && cleanNodes && $CMD -f warmInner2.sql  &> tmp/${testJar}_test1.log

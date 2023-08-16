@@ -9,8 +9,8 @@ getJarFromOSS(){
 
 hostname=$(hostname)
 if [[ $hostname == *"master-1-1"* ]]; then
-    slave_name="${slave_name}"
-    user_name="${user_name}"
+    slave_name="core-1-"
+    user_name="emr-user"
 else
     slave_name="node"
     user_name="root"
@@ -115,8 +115,10 @@ getCMD()
                                         --conf spark.driver.maxResultSize=32g \
                                         --conf spark.gluten.loadLibFromJar=true \
                                         --conf spark.gluten.enabled=true \
-                                        --conf spark.executor.extraClassPath="/usr/local/spark/gluten-current/*"\
-                                        --conf spark.driver.extraClassPath="/usr/local/spark/gluten-current/*"\
+                                        --conf spark.executor.extraClassPath="/opt/apps/SPARK3/gluten-current/*:/opt/apps/METASTORE/metastore-current/hive2/*:/opt/apps/JINDOSDK/jindosdk-current/lib/*:/opt/apps/EMRHOOK/emrhook-current/spark-hook-spark30.jar" \
+                                        --conf spark.driver.extraClassPath="/opt/apps/SPARK3/gluten-current/*:/opt/apps/METASTORE/metastore-current/hive2/*:/opt/apps/JINDOSDK/jindosdk-current/lib/*:/opt/apps/EMRHOOK/emrhook-current/spark-hook-spark30.jar" \
+                                        --conf spark.gluten.sql.columnar.maxBatchSize=32768 \
+                                        --conf spark.gluten.sql.columnar.backend.velox.spillEnabled=false \
                                       --database $DATASET"
     echo "===========================测试Gluten========================="
   else
