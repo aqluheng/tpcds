@@ -1,16 +1,16 @@
 #!/bin/bash
-filename=yitian-master
-outPath=/opt/apps/SPARK3/
+filename=opensource-1.0-bk
+outPath=/usr/local/spark/
 
-sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-1:
-sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-2:
-sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-3:
+sudo -u root scp -r -o StrictHostKeyChecking=no $outPath/$filename node1:
+sudo -u root scp -r -o StrictHostKeyChecking=no $outPath/$filename node2:
+sudo -u root scp -r -o StrictHostKeyChecking=no $outPath/$filename node3:
 
-sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo rm -r $outPath/$filename
-sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo rm -r $outPath/$filename
-sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo rm -r $outPath/$filename
+sudo -u root ssh -o StrictHostKeyChecking=no node1 sudo rm -r $outPath/$filename
+sudo -u root ssh -o StrictHostKeyChecking=no node2 sudo rm -r $outPath/$filename
+sudo -u root ssh -o StrictHostKeyChecking=no node3 sudo rm -r $outPath/$filename
 
-sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-1 sudo mv $filename $outPath/$filename
-sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-2 sudo mv $filename $outPath/$filename
-sudo -u emr-user ssh -o StrictHostKeyChecking=no core-1-3 sudo mv $filename $outPath/$filename
+sudo -u root ssh -o StrictHostKeyChecking=no node1 sudo mv $filename $outPath/$filename
+sudo -u root ssh -o StrictHostKeyChecking=no node2 sudo mv $filename $outPath/$filename
+sudo -u root ssh -o StrictHostKeyChecking=no node3 sudo mv $filename $outPath/$filename
 

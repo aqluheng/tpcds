@@ -35,6 +35,9 @@ setJarLink(){
       sudo -u ${user_name} ssh -o StrictHostKeyChecking=no ${slave_name}2 sudo rm /usr/local/spark/gluten-current
       sudo -u ${user_name} ssh -o StrictHostKeyChecking=no ${slave_name}3 sudo rm /usr/local/spark/gluten-current
       ln -s /usr/local/spark/$testJar /usr/local/spark/gluten-current
+      ssh ${slave_name}1 mkdir -p /usr/local/spark/
+      ssh ${slave_name}2 mkdir -p /usr/local/spark/
+      ssh ${slave_name}3 mkdir -p /usr/local/spark/
       sudo -u ${user_name} ssh -o StrictHostKeyChecking=no ${slave_name}1 sudo ln -s /usr/local/spark/$testJar /usr/local/spark/gluten-current
       sudo -u ${user_name} ssh -o StrictHostKeyChecking=no ${slave_name}2 sudo ln -s /usr/local/spark/$testJar /usr/local/spark/gluten-current
       sudo -u ${user_name} ssh -o StrictHostKeyChecking=no ${slave_name}3 sudo ln -s /usr/local/spark/$testJar /usr/local/spark/gluten-current
@@ -101,13 +104,13 @@ getCMD()
                   --conf spark.driver.memory=20g \
                     --conf spark.executor.instances=24 \
                       --conf spark.executor.cores=8 \
-                        --conf spark.executor.memory=10G \
+                        --conf spark.executor.memory=4G \
                           --conf spark.plugins=io.glutenproject.GlutenPlugin \
                             --conf spark.gluten.sql.columnar.backend.lib=velox \
                               --conf spark.executorEnv.VELOX_HDFS="hdfs://master:9000" \
                                 --conf spark.shuffle.manager=org.apache.spark.shuffle.sort.ColumnarShuffleManager \
                                   --conf spark.memory.offHeap.enabled=true \
-                                    --conf spark.memory.offHeap.size=10g \
+                                    --conf spark.memory.offHeap.size=21g \
                                       --conf spark.executor.memoryOverhead=1g \
                                         --conf spark.driver.maxResultSize=32g \
                                         --conf spark.gluten.loadLibFromJar=true \
@@ -123,7 +126,7 @@ getCMD()
                   --conf spark.driver.memory=20g \
                     --conf spark.executor.instances=24 \
                       --conf spark.executor.cores=8 \
-                        --conf spark.executor.memory=10G \
+                        --conf spark.executor.memory=26G \
                           --conf spark.executor.memoryOverhead=1g \
                             --conf spark.driver.maxResultSize=32g \
                             --conf spark.gluten.enabled=false \
