@@ -85,4 +85,5 @@ CMD="spark-sql --master yarn \
                                     --conf spark.gluten.enabled=${GLUTEN_ENABLE} \
                                     --conf spark.executor.extraClassPath="/opt/apps/METASTORE/metastore-current/hive2/*:/opt/apps/JINDOSDK/jindosdk-current/lib/*:/opt/apps/EMRHOOK/emrhook-current/spark-hook-spark30.jar:/opt/apps/SPARK3/gluten-current/*"\
                                     --conf spark.driver.extraClassPath="/opt/apps/METASTORE/metastore-current/hive2/*:/opt/apps/JINDOSDK/jindosdk-current/lib/*:/opt/apps/EMRHOOK/emrhook-current/spark-hook-spark30.jar:/opt/apps/SPARK3/gluten-current/*"\
+                                    --conf spark.gluten.sql.columnar.maxBatchSize=16384 \
                                    --database $DATASET"

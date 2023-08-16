@@ -1,5 +1,5 @@
 #!/bin/bash
-filename=yitian-master
+filename=gluten-1.0.0-onlyLinear-64KB
 outPath=/opt/apps/SPARK3/
 
 sudo -u emr-user scp -r -o StrictHostKeyChecking=no $outPath/$filename core-1-1:

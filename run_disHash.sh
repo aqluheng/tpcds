@@ -5,8 +5,8 @@ bin=`cd $bin;pwd`
 GLUTEN_ENABLE=false
 DATASET="parquet_1000"
 source utils/helper-functions.sh
-cleanNodes && $CMD -f warmSkip72.sql  &> tmp/vanilla_test1.log
-
+cleanNodes && $CMD -f warmSkip72.sql  &> tmp/vanilla_test2.log
+exit 0
 GLUTEN_ENABLE=true
 source utils/helper-functions.sh
 testJar="gluten-opensource-1.0.0" 
