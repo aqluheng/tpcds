@@ -11,4 +11,5 @@ parquet_dump
 sql23a
 *.parquet
 *.json
+flamegraph
 page64_rpm

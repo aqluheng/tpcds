@@ -86,7 +86,7 @@ runJar(){
 
 ossutil cp -r oss://ptg-storage/bigdata/gluten/release/opensource-$date /opt/apps/SPARK3/
 if [ -d "/opt/apps/SPARK3/opensource-$date" ]; then
-  sendToNodes /opt/apps/SPARK3 opensource-$date
+  sendToNodes opensource-$date
   testJar="opensource-$date"
   runJar
 fi

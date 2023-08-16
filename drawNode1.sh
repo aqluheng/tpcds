@@ -1,6 +1,6 @@
 #!/bin/bash
 rm -f ./nmonFile/*
-sudo -u emr-user scp -r -o StrictHostKeyChecking=no core-1-1:/home/emr-user/query*.nmon ./nmonFile/
+sudo -u root scp -r -o StrictHostKeyChecking=no node1:/root/query*.nmon ./nmonFile/
 
 for file in ./nmonFile/*.nmon; do
     if [ -f "$file" ]; then
